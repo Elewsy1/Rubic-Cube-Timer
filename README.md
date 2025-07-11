@@ -28,7 +28,9 @@ The app layout consists of:
 ```bash
 git clone https://github.com/Elewsy1/Rubic-Cube-Timer.git
 cd Rubic-Cube-Timer
-
+```
+### 2. Start backend and frontend
+```bash
 cd backend
 npm install
 node server.js
@@ -39,4 +41,7 @@ npm start
 
 Runs on: http://localhost:3000
 ```
-
+## To DO Next
+1. Display average score
+2. Support sql queries
+3. Use AI api to analyze scores and give suggestion
