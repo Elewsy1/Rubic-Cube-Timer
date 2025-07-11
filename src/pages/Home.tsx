@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
+import './Home.css';
 import Timer from '../components/Timer';
 import GroupSelector from '../components/GroupSelector';
 import ScoreList from '../components/ScoreList';
 import CreateNewGroup from '../components/NewGroup';
+import DeleteGroup from '../components/DeleteGroup';
 
 
 export default function Home() {
@@ -12,6 +14,7 @@ export default function Home() {
     'Group 1': [],
   });
 
+  // Get the time
   const handleSaveTime = (newTime: number) => {
     setScoresByGroup((prev) => ({
       ...prev,
@@ -19,6 +22,7 @@ export default function Home() {
     }));
   };
 
+  // Get the new group
   const handleNewGroup = (newGroup: string) => {
     setGroups((prev) => (
       [...prev, newGroup])
@@ -30,21 +34,59 @@ export default function Home() {
     )
   }
 
+  // Delete a group
+  const handleDeleteGroup = (groupName: string) => {
+    setGroups((prev) => prev.filter((g) => g !== groupName));
+    setScoresByGroup((prev) => {
+      const newScores = { ...prev };
+      delete newScores[groupName];
+      return newScores;
+    });
+    setSelectedGroup((prev) => (groupName === prev && groups.length > 1 ? groups[0] : prev));
+  };
+
+  const handleDeleteLastN = (n: number) => {
+    setScoresByGroup((prev) => {
+      const updatedScores = prev[selectedGroup].slice(0, -n);
+      return {
+        ...prev,
+        [selectedGroup]: updatedScores,
+      };
+    });
+  };
+
+  const handleDeleteAll = () => {
+    setScoresByGroup((prev) => ({
+      ...prev,
+      [selectedGroup]: [],
+    }));
+  };
   return (
     <div style={{ textAlign: 'center' }}>
-      <h2>Rubic Cube Timer</h2>
+    <h2>Rubic Cube Timer</h2>
 
-      <GroupSelector
-        groups={groups}
-        selectedGroup={selectedGroup}
-        onSelectGroup={setSelectedGroup}
-      />
+    <GroupSelector
+      groups={groups}
+      selectedGroup={selectedGroup}
+      onSelectGroup={setSelectedGroup}
+    />
 
-      <CreateNewGroup onSave={handleNewGroup}/>
+    <CreateNewGroup onSave={handleNewGroup} />
+    <DeleteGroup groups={groups} onDelete={handleDeleteGroup} />
 
-      <Timer onSave={handleSaveTime} />
-
-      <ScoreList scores={scoresByGroup[selectedGroup] || []} groupName={selectedGroup} />
+    <div className="layout-container">
+      <div className="score-panel">
+        <ScoreList
+          scores={scoresByGroup[selectedGroup] || []}
+          groupName={selectedGroup}
+          onDeleteLastN={handleDeleteLastN}
+          onDeleteAll={handleDeleteAll}
+        />
+      </div>
+      <div className="timer-panel">
+        <Timer onSave={handleSaveTime} />
+      </div>
     </div>
+  </div>
   );
 }

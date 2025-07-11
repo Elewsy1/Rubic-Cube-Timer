@@ -11,6 +11,8 @@ export default function Timer({ onSave }: TimerProps) {
   const [startTime, setStartTime] = useState<number | null>(null);
   const [readyToStart, setReadyToStart] = useState(false); // 判断是否等待开始
   const [trigger, setTrigger] = useState(Date.now()); // 用来触发 scramble 更新
+  const [statusText, setStatusText] = useState("Press and release space to start, press again to stop");
+
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
@@ -34,9 +36,11 @@ export default function Timer({ onSave }: TimerProps) {
           setTime(finalTime);
           onSave(finalTime);
           setReadyToStart(false); // 需要重新抬起空格才能开始
+          setStatusText("Press and release space to start, press again to stop")
         } else {
           // 处于等待中，不做任何事
           setReadyToStart(true);
+          setStatusText("Ready to start")
         }
       }
     };
@@ -52,6 +56,7 @@ export default function Timer({ onSave }: TimerProps) {
           setTime(0);
           setIsRunning(true);
           setReadyToStart(true); // 表示已经开始，不允许再次开始直到下一次结束
+          setStatusText("")
         }else{
           setTrigger(Date.now());
         }
@@ -65,7 +70,7 @@ export default function Timer({ onSave }: TimerProps) {
       window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('keyup', handleKeyUp);
     };
-  }, [isRunning, startTime, readyToStart]);
+  }, [isRunning, startTime, readyToStart, onSave]);
 
   const formatTime = (ms: number) => {
     const seconds = Math.floor(ms / 1000);
@@ -77,8 +82,8 @@ export default function Timer({ onSave }: TimerProps) {
     <div style={{ fontSize: '4rem', paddingTop: '20px', textAlign: 'center' }}>
       <ScrambleGenerator trigger={trigger} />
       <div>{formatTime(time)}</div>
-      <div style={{ fontSize: '1.2rem' }}>
-        Press and release space to start, press again to stop
+      <div style={{ fontSize: '1.2rem' }} className='tips'>
+        {statusText}
       </div>
     </div>
   );

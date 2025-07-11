@@ -1,0 +1,15 @@
+.layout-container {
+    display: flex;
+
+    align-items: flex-start;
+
+}
+
+.score-panel {
+    margin-left: 30px;
+    margin-right: 0px;
+}
+
+.timer-panel {
+    margin-left: 140px;
+}
